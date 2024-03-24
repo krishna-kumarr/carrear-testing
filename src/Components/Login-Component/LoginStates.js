@@ -1,43 +1,45 @@
-import React from 'react'
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LoginStates = () => {
-    const [LoginDetails, setLoginDetails] = React.useState({
-        username: '',
-        password: ''
-    });
+  const [LoginDetails, setLoginDetails] = React.useState({
+    username: "",
+    password: "",
+  });
 
-    const [LoginErrors, setLoginErrors] = React.useState(false);
-    const [submitLoading, setSubmitLoading] = React.useState(false);
+  const [LoginErrors, setLoginErrors] = React.useState(false);
+  const [submitLoading, setSubmitLoading] = React.useState(false);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setLoginDetails({ ...LoginDetails, [name]: value });
-    };
+  const pageNavigate = useNavigate();
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-     
-        setLoginErrors(true)
-        // if(LoginDetails.username || LoginDetails.password){
-        //     setLoginErrors(true)
-        //     setSubmitLoading(true)
-        // }
-        // else{
-        //     setLoginErrors(false)
-        //     setSubmitLoading(false)
-        // }
-    };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setLoginDetails({ ...LoginDetails, [name]: value });
+  };
 
-    return {
-        LoginDetails,
-        setLoginDetails,
-        LoginErrors,
-        setLoginErrors,
-        submitLoading,
-        setSubmitLoading,
-        handleChange,
-            handleSubmit
+  const handleSubmit = () => {
+    if (LoginDetails.username === "" || LoginDetails.password === "") {
+      setLoginErrors(true);
+      setSubmitLoading(false);
+    } else {
+      setLoginErrors(false);
+      setSubmitLoading(true);
+      pageNavigate("/home");
     }
-}
+  };
 
-export default LoginStates
+
+  return {
+    LoginDetails,
+    setLoginDetails,
+    LoginErrors,
+    setLoginErrors,
+    submitLoading,
+    setSubmitLoading,
+    handleChange,
+    handleSubmit,
+    pageNavigate
+  };
+};
+
+export default LoginStates;
