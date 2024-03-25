@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import useLoginStates from "./LoginStates";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const {
@@ -81,6 +82,17 @@ const Login = () => {
             </div>
             
           </form>
+          <Link to='/forgot_password' data-testid='forgot-password'>Forgot password</Link>
+
+          
+          <Link to='/google' data-testid='google'>Google</Link>
+          <Link to='/linked-in' data-testid='linked-in'>linked-in</Link>
+          <Link to='/apple' data-testid='apple'>apple</Link>
+
+
+          <Link to='/sign-up' data-testid='sign-up'>sign-up</Link>
+
+
         </div>
       </div>
     </div>

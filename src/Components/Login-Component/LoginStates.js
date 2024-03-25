@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginStates = () => {
-  const [LoginDetails, setLoginDetails] = React.useState({
+  const [LoginDetails, setLoginDetails] = useState({
     username: "",
     password: "",
   });
 
-  const [LoginErrors, setLoginErrors] = React.useState(false);
-  const [submitLoading, setSubmitLoading] = React.useState(false);
+  const [LoginErrors, setLoginErrors] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const pageNavigate = useNavigate();
 

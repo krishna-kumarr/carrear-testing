@@ -1,9 +1,10 @@
 import React from 'react' 
+import { Link } from 'react-router-dom'
 
 const Home = () => { 
  
   return (
-    <a href="/" role="home-page">Home</a>
+    <Link to="/" role="home-page">Home</Link>
   )
 }
 

@@ -1,18 +1,26 @@
-import {
-  renderHook,
-  act,
-  render,
-  screen,
-  fireEvent
-} from "@testing-library/react";
+import { renderHook, render, screen, fireEvent } from "@testing-library/react";
 import useLoginStates from "./LoginStates";
-import Login from "./Login";
 import * as router from "react-router";
+import App from "../../App";
+import userEvent from "@testing-library/user-event";
+import { BrowserRouter,Router } from 'react-router-dom'
+import { act } from 'react-dom/test-utils';
+import '@testing-library/jest-dom'
+import Login from "./Login";
+import {createMemoryHistory} from 'history'
 
 describe("Login Test cases", () => {
-  const LoginComponent = () => {
-    return render(<Login />);
+
+  //global router
+  const renderWithRouter = (ui, { route = '/' } = {}) => {
+    window.history.pushState({}, 'Test page', route)
+
+    return {
+      user: userEvent,
+      ...render(ui, { wrapper: BrowserRouter }),
+    }
   }
+
   const handleOnSubmitMock = jest.fn();
   const navigate = jest.fn();
 
@@ -22,9 +30,8 @@ describe("Login Test cases", () => {
 
 
 
-
   test("Checking fields are available", () => {
-    LoginComponent();
+    renderWithRouter(<App />, { route: '/' })
     expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
     expect(screen.getByRole(/username/i)).toBeInTheDocument();
     expect(screen.getByRole(/password/i)).toBeInTheDocument();
@@ -38,8 +45,8 @@ describe("Login Test cases", () => {
   });
 
   test("checking fields as empty when clicking submit button", () => {
-    LoginComponent();
     const { result } = renderHook(() => useLoginStates());
+    renderWithRouter(<App />, { route: '/' })
 
     screen.getByRole("login-button").onclick = handleOnSubmitMock;
     fireEvent.click(screen.getByRole("login-button"));
@@ -59,7 +66,7 @@ describe("Login Test cases", () => {
   });
 
   test("username field is empty error message when clicking submit button", () => {
-    LoginComponent();
+    renderWithRouter(<App />, { route: '/' })
     const { result } = renderHook(() => useLoginStates());
 
     screen.getByRole("login-button").onclick = handleOnSubmitMock;
@@ -78,7 +85,7 @@ describe("Login Test cases", () => {
   });
 
   test("password field is empty error message when clicking submit button", () => {
-    LoginComponent();
+    renderWithRouter(<App />, { route: '/' })
     const { result } = renderHook(() => useLoginStates());
 
     screen.getByRole("login-button").onclick = handleOnSubmitMock;
@@ -98,10 +105,9 @@ describe("Login Test cases", () => {
 
   test("Entering username and password and clicking submit button", () => {
     const { result } = renderHook(() => useLoginStates());
-    LoginComponent();
+    renderWithRouter(<App />, { route: '/' })
 
     //setting username and password target values of input element
-    screen.getByRole("login-button").onchange = handleOnSubmitMock;
     fireEvent.change(screen.getByRole("username"), {
       target: { value: "second-carrear" },
     });
@@ -124,6 +130,7 @@ describe("Login Test cases", () => {
       result.current.handleChange(dynamicPasswordData);
     });
 
+
     //Updated dynamically and submitted the formdata
     screen.getByRole("login-button").onclick = handleOnSubmitMock;
     fireEvent.click(screen.getByRole("login-button"));
@@ -143,7 +150,61 @@ describe("Login Test cases", () => {
 
     expect(screen.getByRole(/disable-login-button/i)).toBeInTheDocument();
     expect(screen.getByRole(/disable-login-button/i)).toBeDisabled();
- 
+
     expect(navigate).toHaveBeenCalledWith('/home');
   });
+
+
+
+  test("clicking forgot password link", () => {
+    const { user } = renderWithRouter(<Login />, { route: '/' })
+    expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
+
+    act(() => {
+      user.click(screen.getByTestId('forgot-password'))
+    })
+    expect(screen.getByText(/forgot password/i)).toBeInTheDocument();
+  })
+
+  test("clicking google link", () => {
+    renderWithRouter(<App />, { route: '/' })
+    expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
+
+    screen.getByTestId("google").onclick = handleOnSubmitMock;
+    fireEvent.click(screen.getByTestId("google"));
+    expect(handleOnSubmitMock).toHaveBeenCalledTimes(1);
+  })
+
+  test("clicking linked link", () => {
+    renderWithRouter(<App />, { route: '/' })
+    expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
+
+    screen.getByTestId("linked-in").onclick = handleOnSubmitMock;
+    fireEvent.click(screen.getByTestId("linked-in"));
+    expect(handleOnSubmitMock).toHaveBeenCalledTimes(1);
+  })
+
+  test("clicking apple link", () => {
+    renderWithRouter(<App />, { route: '/' })
+    expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
+
+    screen.getByTestId("apple").onclick = handleOnSubmitMock;
+    fireEvent.click(screen.getByTestId("apple"));
+    expect(handleOnSubmitMock).toHaveBeenCalledTimes(1);
+  })
+
+  test("clicking apple link", async() => {
+    const history = createMemoryHistory()
+    render(
+      <BrowserRouter history={history}>
+        <App />
+      </BrowserRouter>,
+    )
+
+    expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
+    
+    await fireEvent.click(screen.getByTestId("sign-up"));
+
+    expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
+  })
 });
