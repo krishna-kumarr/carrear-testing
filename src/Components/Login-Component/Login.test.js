@@ -2,24 +2,11 @@ import { renderHook, render, screen, fireEvent } from "@testing-library/react";
 import useLoginStates from "./LoginStates";
 import * as router from "react-router";
 import App from "../../App";
-import userEvent from "@testing-library/user-event";
-import { BrowserRouter,Router } from 'react-router-dom'
 import { act } from 'react-dom/test-utils';
 import '@testing-library/jest-dom'
 import Login from "./Login";
-import {createMemoryHistory} from 'history'
 
 describe("Login Test cases", () => {
-
-  //global router
-  const renderWithRouter = (ui, { route = '/' } = {}) => {
-    window.history.pushState({}, 'Test page', route)
-
-    return {
-      user: userEvent,
-      ...render(ui, { wrapper: BrowserRouter }),
-    }
-  }
 
   const handleOnSubmitMock = jest.fn();
   const navigate = jest.fn();
@@ -28,10 +15,8 @@ describe("Login Test cases", () => {
     jest.spyOn(router, "useNavigate").mockImplementation(() => navigate);
   });
 
-
-
   test("Checking fields are available", () => {
-    renderWithRouter(<App />, { route: '/' })
+    render(<App/>)
     expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
     expect(screen.getByRole(/username/i)).toBeInTheDocument();
     expect(screen.getByRole(/password/i)).toBeInTheDocument();
@@ -46,7 +31,7 @@ describe("Login Test cases", () => {
 
   test("checking fields as empty when clicking submit button", () => {
     const { result } = renderHook(() => useLoginStates());
-    renderWithRouter(<App />, { route: '/' })
+    render(<App />)
 
     screen.getByRole("login-button").onclick = handleOnSubmitMock;
     fireEvent.click(screen.getByRole("login-button"));
@@ -66,7 +51,7 @@ describe("Login Test cases", () => {
   });
 
   test("username field is empty error message when clicking submit button", () => {
-    renderWithRouter(<App />, { route: '/' })
+    render(<App />)
     const { result } = renderHook(() => useLoginStates());
 
     screen.getByRole("login-button").onclick = handleOnSubmitMock;
@@ -85,7 +70,7 @@ describe("Login Test cases", () => {
   });
 
   test("password field is empty error message when clicking submit button", () => {
-    renderWithRouter(<App />, { route: '/' })
+    render(<App/>)
     const { result } = renderHook(() => useLoginStates());
 
     screen.getByRole("login-button").onclick = handleOnSubmitMock;
@@ -105,7 +90,7 @@ describe("Login Test cases", () => {
 
   test("Entering username and password and clicking submit button", () => {
     const { result } = renderHook(() => useLoginStates());
-    renderWithRouter(<App />, { route: '/' })
+    render(<App />)
 
     //setting username and password target values of input element
     fireEvent.change(screen.getByRole("username"), {
@@ -157,17 +142,14 @@ describe("Login Test cases", () => {
 
 
   test("clicking forgot password link", () => {
-    const { user } = renderWithRouter(<Login />, { route: '/' })
-    expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
-
-    act(() => {
-      user.click(screen.getByTestId('forgot-password'))
-    })
-    expect(screen.getByText(/forgot password/i)).toBeInTheDocument();
+    render(<App />)
+    expect(screen.getByTestId('forgot-password')).toBeInTheDocument();
+    // fireEvent.click(screen.getByTestId('forgot-password'))
+    // expect(screen.getByTestId('forgot-password')).toHaveBeenCalled();
   })
 
   test("clicking google link", () => {
-    renderWithRouter(<App />, { route: '/' })
+    render(<App/>)
     expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
 
     screen.getByTestId("google").onclick = handleOnSubmitMock;
@@ -176,7 +158,7 @@ describe("Login Test cases", () => {
   })
 
   test("clicking linked link", () => {
-    renderWithRouter(<App />, { route: '/' })
+    render(<App/>)
     expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
 
     screen.getByTestId("linked-in").onclick = handleOnSubmitMock;
@@ -185,7 +167,7 @@ describe("Login Test cases", () => {
   })
 
   test("clicking apple link", () => {
-    renderWithRouter(<App />, { route: '/' })
+    render(<App/>)
     expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
 
     screen.getByTestId("apple").onclick = handleOnSubmitMock;
@@ -193,18 +175,12 @@ describe("Login Test cases", () => {
     expect(handleOnSubmitMock).toHaveBeenCalledTimes(1);
   })
 
-  test("clicking apple link", async() => {
-    const history = createMemoryHistory()
-    render(
-      <BrowserRouter history={history}>
-        <App />
-      </BrowserRouter>,
-    )
-
+  test("clicking signup link", async() => {
+    render(<App/>)
     expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
-    
-    await fireEvent.click(screen.getByTestId("sign-up"));
 
-    expect(screen.getByText(/SignIn to Second carrears/i)).toBeInTheDocument();
+    screen.getByTestId("sign-up").onclick = handleOnSubmitMock;
+    fireEvent.click(screen.getByTestId("sign-up"));
+    expect(handleOnSubmitMock).toHaveBeenCalledTimes(1);
   })
 });

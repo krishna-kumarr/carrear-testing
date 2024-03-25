@@ -83,7 +83,6 @@ const Login = () => {
             
           </form>
           <Link to='/forgot_password' data-testid='forgot-password'>Forgot password</Link>
-
           
           <Link to='/google' data-testid='google'>Google</Link>
           <Link to='/linked-in' data-testid='linked-in'>linked-in</Link>

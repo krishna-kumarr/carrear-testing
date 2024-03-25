@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {  useLocation, useNavigate } from "react-router-dom";
 
 const LoginStates = () => {
   const [LoginDetails, setLoginDetails] = useState({
@@ -11,6 +11,7 @@ const LoginStates = () => {
   const [submitLoading, setSubmitLoading] = useState(false);
 
   const pageNavigate = useNavigate();
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
