@@ -1,19 +1,34 @@
-import React from "react";
-import useLoginStates from "./LoginStates";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const {
-    LoginDetails,
-    setLoginDetails,
-    LoginErrors,
-    setLoginErrors,
-    submitLoading,
-    setSubmitLoading,
-    handleChange,
-    handleSubmit
-  } = useLoginStates();
+  const [LoginDetails, setLoginDetails] = useState({
+    username: "",
+    password: "",
+  });
 
+  const [LoginErrors, setLoginErrors] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+
+  const pageNavigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setLoginDetails({ ...LoginDetails, [name]: value });
+  };
+
+  const handleSubmit = async() => {
+    if (LoginDetails.username === "" || LoginDetails.password === "") {
+      setLoginErrors(true);
+      setSubmitLoading(false);
+    } else {
+      setLoginErrors(false);
+      setSubmitLoading(true); 
+      setTimeout(()=>{
+         pageNavigate("/home"); 
+      },1000)
+    }
+  };
   
 
   return (
@@ -83,6 +98,7 @@ const Login = () => {
             
           </form>
           <Link to='/forgot_password' data-testid='forgot-password'>Forgot password</Link>
+
           
           <Link to='/google' data-testid='google'>Google</Link>
           <Link to='/linked-in' data-testid='linked-in'>linked-in</Link>
